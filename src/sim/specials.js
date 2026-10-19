@@ -221,7 +221,7 @@ export const SPECIALS = {
     },
     hitbox(f) {
       if (f.sp !== 1 || f.hits > 0) return null;
-      return { box: { x: -30, y: -74, w: 80, h: 72 }, dmg: 140, knockdown: true, blockstun: 16, push: 10, energy: 0, hitstop: 12 };
+      return { box: { x: -30, y: -74, w: 80, h: 72 }, dmg: 155, knockdown: true, blockstun: 16, push: 10, energy: 0, hitstop: 12 };
     },
   },
 };

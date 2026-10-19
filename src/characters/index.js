@@ -109,18 +109,18 @@ export const CHARACTERS = {
   },
   yogurt: {
     id: 'yogurt',
-    hp: 880,
+    hp: 930,
     walk: 4.8,
     jumpV: -16.5,
     jumpX: 4.8,
     body: { w: 64, h: 128 },
     material: 'fur',
-    dmgMul: 0.9,
+    dmgMul: 1,
     reach: 6,
     frameAdj: -1,
     special: 'fluffRoll',
     specialRange: 600,
-    ui: { power: 2, speed: 5, defense: 2, range: 2 },
+    ui: { power: 3, speed: 5, defense: 3, range: 2 },
   },
 };
 
