@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Scene preview</title>
+<style>body{margin:0;background:#222}canvas{display:block}</style></head>
+<body><canvas id="c" width="1920" height="1080"></canvas>
+<script type="module">
+// Dev preview: renders a scripted moment of a match on each stage.
+import { createMatch, stepMatch } from '../src/sim/match.js';
+import { Renderer } from '../src/render/renderer.js';
+import { IN, W, H } from '../src/config.js';
+const params = new URLSearchParams(location.search);
+const stage = params.get('stage') || 'toyroom';
+const p1 = params.get('p1') || 'teddy', p2 = params.get('p2') || 'robo';
+const frames = +(params.get('frames') || 200);
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const m = createMatch({ p1, p2, stage });
+const r = new Renderer();
+m.f[0].energy = 100; m.f[1].energy = 60;
+for (let i = 0; i < frames; i++) {
+  const a = i < 150 ? IN.R : (i % 20 === 0 ? IN.P : (i === 175 ? IN.S : 0));
+  const b = i % 30 === 0 ? IN.K : 0;
+  const ev = stepMatch(m, [a, b]);
+  r.events(ev, m);
+  r.update(1 / 60, m);
+}
+ctx.scale(2, 2);
+r.draw(ctx, m, { x0: 0, y0: 0, x1: W, y1: H, q: 2 }, {});
+document.title = 'done';
+</script></body></html>

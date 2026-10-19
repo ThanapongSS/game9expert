@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>App icon</title>
+<style>body{margin:0;background:transparent}canvas{display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+// Renders the app icon. ?size=512&maskable=1 — used by tools/make-icons.mjs.
+import { drawPortrait } from '../src/render/puppet.js';
+const q = new URLSearchParams(location.search);
+const size = +(q.get('size') || 512);
+const maskable = q.get('maskable') === '1';
+const c = document.getElementById('c');
+c.width = c.height = size;
+const ctx = c.getContext('2d');
+const s = size / 512;
+ctx.scale(s, s);
+const g = ctx.createRadialGradient(256, 220, 40, 256, 256, 360);
+g.addColorStop(0, '#ffb85a');
+g.addColorStop(0.55, '#e0508a');
+g.addColorStop(1, '#3a1a6a');
+ctx.fillStyle = g;
+if (maskable) {
+  ctx.fillRect(0, 0, 512, 512);
+} else {
+  ctx.beginPath();
+  ctx.roundRect(0, 0, 512, 512, 110);
+  ctx.fill();
+}
+// star burst
+ctx.save();
+ctx.translate(256, 256);
+ctx.fillStyle = 'rgba(255, 240, 150, 0.55)';
+ctx.beginPath();
+for (let i = 0; i < 24; i++) {
+  const a = (i / 24) * Math.PI * 2;
+  const r = i % 2 ? 120 : 230;
+  ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+}
+ctx.closePath();
+ctx.fill();
+ctx.restore();
+const k = maskable ? 0.78 : 1;
+ctx.translate(256, 268);
+ctx.scale(k, k);
+drawPortrait(ctx, 'teddy', 0, 0, 330, { expr: 'angry' });
+document.title = 'done';
+</script></body></html>

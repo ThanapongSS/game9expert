@@ -1,0 +1,274 @@
+import { storage } from './storage.js';
+
+const DICT = {
+  th: {
+    'game.title': 'ศึกตุ๊กตา',
+    'game.sub': 'DOLL FIGHTERS',
+    'title.tap': 'แตะเพื่อเริ่ม',
+    'rotate': 'หมุนมือถือเป็นแนวนอนเพื่อเล่น',
+    'back': 'กลับ',
+
+    'menu.quick': 'สู้ด่วน',
+    'menu.quick.d': 'สู้กับคอมพิวเตอร์ 1 ยก',
+    'menu.arcade': 'อาร์เคด',
+    'menu.arcade.d': 'ไล่ล้มทุกตัว คว้าแชมป์!',
+    'menu.online': 'เล่นกับเพื่อน',
+    'menu.online.d': 'ออนไลน์ด้วยรหัสห้อง',
+    'menu.settings': 'ตั้งค่า',
+
+    'select.you': 'เลือกตุ๊กตาของคุณ',
+    'select.opp': 'เลือกคู่ต่อสู้',
+    'select.random': 'สุ่ม',
+    'select.soon': 'เร็วๆ นี้',
+    'select.confirm': 'ยืนยัน',
+    'stat.power': 'พลัง',
+    'stat.speed': 'ความเร็ว',
+    'stat.defense': 'ความทน',
+    'stat.range': 'ระยะ',
+    'special': 'ท่าไม้ตาย',
+
+    'setup.title': 'ตั้งค่าการต่อสู้',
+    'setup.level': 'ความยาก',
+    'setup.stage': 'ฉาก',
+    'level.easy': 'ง่าย',
+    'level.normal': 'ปานกลาง',
+    'level.hard': 'ยาก',
+    'setup.fight': 'สู้เลย!',
+
+    'stage.toyroom': 'ห้องของเล่น',
+    'stage.sala': 'ศาลาริมน้ำ',
+    'stage.random': 'สุ่ม',
+
+    'hud.ready': 'พร้อมไหม?',
+    'hud.fight': 'สู้!',
+    'hud.ko': 'K.O.!',
+    'hud.timeup': 'หมดเวลา!',
+    'hud.draw': 'เสมอ!',
+    'hud.hits': '{n} ฮิต!',
+    'hud.max': 'ท่าไม้ตายพร้อม!',
+    'hud.you': 'คุณ',
+    'hud.cpu': 'CPU',
+    'hud.friend': 'เพื่อน',
+    'hud.ping': 'ปิง {ms}ms',
+
+    'result.win': 'คุณชนะ!',
+    'result.lose': 'แพ้แล้ว...',
+    'result.draw': 'เสมอ!',
+    'result.wins': '{name} ชนะ!',
+    'result.rematch': 'สู้อีกครั้ง',
+    'result.change': 'เปลี่ยนตัว',
+    'result.menu': 'เมนูหลัก',
+    'result.next': 'ด่านต่อไป',
+    'result.continue': 'สู้ใหม่',
+    'result.giveup': 'ยอมแพ้',
+
+    'arcade.stage': 'ด่าน {n}/{total}',
+    'arcade.champion': 'แชมป์ตุ๊กตา!',
+    'arcade.champion.d': '{name} ล้มทุกคนได้แล้ว 🏆',
+
+    'pause.title': 'หยุดชั่วคราว',
+    'pause.resume': 'เล่นต่อ',
+    'pause.quit': 'ออกจากการต่อสู้',
+
+    'settings.lang': 'ภาษา',
+    'settings.music': 'เพลง',
+    'settings.sfx': 'เสียงเอฟเฟกต์',
+    'settings.fullscreen': 'เต็มจอ',
+    'settings.howto': 'วิธีเล่น',
+    'on': 'เปิด',
+    'off': 'ปิด',
+    'howto.move': '◀ ▶ เดิน · ▲ กระโดด (ปัดเฉียงขึ้นเพื่อกระโดดไปข้างหน้า)',
+    'howto.attack': '👊 ต่อย (เร็ว) · 🦶 เตะ (แรง ไกลกว่า) · 🛡 กดค้างเพื่อบล็อก',
+    'howto.special': '⭐ ท่าไม้ตาย ใช้ได้เมื่อเกจพลังเต็ม (เกจเพิ่มเมื่อตีโดนหรือโดนตี)',
+    'howto.rules': '1 ยก 90 วินาที · HP หมดแพ้ทันที · หมดเวลาใครเลือดเหลือมากกว่าชนะ',
+    'howto.keys': 'คีย์บอร์ด: A/D เดิน · W กระโดด · J ต่อย · K เตะ · L บล็อก · I ท่าไม้ตาย · Esc พัก',
+
+    'online.title': 'เล่นกับเพื่อน',
+    'online.create': 'สร้างห้อง',
+    'online.join': 'เข้าห้อง',
+    'online.code': 'รหัสห้อง',
+    'online.enter': 'ใส่รหัสห้อง 5 ตัว',
+    'online.waiting': 'รอเพื่อนเข้าห้อง...',
+    'online.hint': 'ส่งรหัสหรือลิงก์นี้ให้เพื่อน แล้วให้เพื่อนกด "เข้าห้อง"',
+    'online.connecting': 'กำลังเชื่อมต่อ...',
+    'online.creating': 'กำลังสร้างห้อง...',
+    'online.copy': 'คัดลอกรหัส',
+    'online.copied': 'คัดลอกแล้ว!',
+    'online.share': 'แชร์ลิงก์',
+    'online.pickWait': 'รอเพื่อนเลือกตุ๊กตา...',
+    'online.rematchWait': 'รอเพื่อนกดสู้อีกครั้ง...',
+    'online.leave': 'ออกจากห้อง',
+    'online.err.notfound': 'ไม่พบห้องนี้ ตรวจรหัสอีกครั้งนะ',
+    'online.err.net': 'เชื่อมต่อกับเพื่อนไม่ได้ ลองใช้ Wi-Fi เดียวกันหรือเปลี่ยนเครือข่าย',
+    'online.err.server': 'ต่อเซิร์ฟเวอร์จับคู่ไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่',
+    'online.err.closed': 'เพื่อนออกจากห้องหรือหลุดการเชื่อมต่อ',
+    'online.err.version': 'เวอร์ชันเกมไม่ตรงกัน ให้ทั้งคู่รีเฟรชหน้าเว็บ',
+    'online.err.full': 'ห้องนี้มีผู้เล่นครบแล้ว',
+    'online.note': 'เล่นผ่านอินเทอร์เน็ตแบบ P2P · Wi-Fi เสถียรที่สุด',
+
+    'char.teddy': 'เท็ดดี้',
+    'char.teddy.role': 'หมีผ้าหมัดหนัก',
+    'char.teddy.sp': 'หมีทุ่มพสุธา',
+    'char.robo': 'โรโบ',
+    'char.robo.role': 'หุ่นเหล็กยิงไกล',
+    'char.robo.sp': 'จรวดหมัดพิฆาต',
+    'char.hunkrabok': 'หุ่นกระบอก',
+    'char.hunkrabok.role': 'จอมไวไม้กระบอก',
+    'char.hunkrabok.sp': 'ไม้กระบอกพายุหมุน',
+    'char.siakabal': 'เสียกบาล',
+    'char.siakabal.role': 'ดินเผาสายสาป',
+    'char.siakabal.sp': 'สาปส่งเคราะห์',
+    'char.voodoo': 'วูดู',
+    'char.kokeshi': 'โคเคชิ',
+    'char.chaowang': 'ชาววัง',
+    'char.nangkwak': 'นางกวัก',
+  },
+  en: {
+    'game.title': 'Doll Fighters',
+    'game.sub': 'ศึกตุ๊กตา',
+    'title.tap': 'Tap to start',
+    'rotate': 'Rotate your phone to landscape',
+    'back': 'Back',
+
+    'menu.quick': 'Quick Match',
+    'menu.quick.d': 'One round vs the CPU',
+    'menu.arcade': 'Arcade',
+    'menu.arcade.d': 'Beat everyone, become champion!',
+    'menu.online': 'Play a Friend',
+    'menu.online.d': 'Online with a room code',
+    'menu.settings': 'Settings',
+
+    'select.you': 'Choose your doll',
+    'select.opp': 'Choose your opponent',
+    'select.random': 'Random',
+    'select.soon': 'Coming soon',
+    'select.confirm': 'Confirm',
+    'stat.power': 'Power',
+    'stat.speed': 'Speed',
+    'stat.defense': 'Toughness',
+    'stat.range': 'Range',
+    'special': 'Special',
+
+    'setup.title': 'Match setup',
+    'setup.level': 'Difficulty',
+    'setup.stage': 'Stage',
+    'level.easy': 'Easy',
+    'level.normal': 'Normal',
+    'level.hard': 'Hard',
+    'setup.fight': 'FIGHT!',
+
+    'stage.toyroom': 'Toy Room',
+    'stage.sala': 'Riverside Sala',
+    'stage.random': 'Random',
+
+    'hud.ready': 'READY?',
+    'hud.fight': 'FIGHT!',
+    'hud.ko': 'K.O.!',
+    'hud.timeup': 'TIME UP!',
+    'hud.draw': 'DRAW!',
+    'hud.hits': '{n} HITS!',
+    'hud.max': 'SPECIAL READY!',
+    'hud.you': 'YOU',
+    'hud.cpu': 'CPU',
+    'hud.friend': 'FRIEND',
+    'hud.ping': 'ping {ms}ms',
+
+    'result.win': 'YOU WIN!',
+    'result.lose': 'YOU LOSE...',
+    'result.draw': 'DRAW!',
+    'result.wins': '{name} WINS!',
+    'result.rematch': 'Rematch',
+    'result.change': 'Change doll',
+    'result.menu': 'Main menu',
+    'result.next': 'Next fight',
+    'result.continue': 'Continue',
+    'result.giveup': 'Give up',
+
+    'arcade.stage': 'Stage {n}/{total}',
+    'arcade.champion': 'CHAMPION!',
+    'arcade.champion.d': '{name} beat everyone 🏆',
+
+    'pause.title': 'Paused',
+    'pause.resume': 'Resume',
+    'pause.quit': 'Quit fight',
+
+    'settings.lang': 'Language',
+    'settings.music': 'Music',
+    'settings.sfx': 'Sound effects',
+    'settings.fullscreen': 'Fullscreen',
+    'settings.howto': 'How to play',
+    'on': 'On',
+    'off': 'Off',
+    'howto.move': '◀ ▶ walk · ▲ jump (slide up-forward to jump forward)',
+    'howto.attack': '👊 punch (fast) · 🦶 kick (strong, longer) · 🛡 hold to block',
+    'howto.special': '⭐ special when the energy bar is full (fills when you hit or get hit)',
+    'howto.rules': 'One 90-second round · K.O. wins · at time up, more health wins',
+    'howto.keys': 'Keyboard: A/D walk · W jump · J punch · K kick · L block · I special · Esc pause',
+
+    'online.title': 'Play a Friend',
+    'online.create': 'Create room',
+    'online.join': 'Join room',
+    'online.code': 'Room code',
+    'online.enter': 'Enter the 5-letter code',
+    'online.waiting': 'Waiting for your friend...',
+    'online.hint': 'Send this code or link to your friend, then they tap "Join room"',
+    'online.connecting': 'Connecting...',
+    'online.creating': 'Creating room...',
+    'online.copy': 'Copy code',
+    'online.copied': 'Copied!',
+    'online.share': 'Share link',
+    'online.pickWait': 'Waiting for your friend to pick...',
+    'online.rematchWait': 'Waiting for your friend...',
+    'online.leave': 'Leave room',
+    'online.err.notfound': 'Room not found. Check the code.',
+    'online.err.net': "Couldn't connect to your friend. Try the same Wi-Fi or another network.",
+    'online.err.server': "Couldn't reach the matchmaking server. Check your internet and retry.",
+    'online.err.closed': 'Your friend left or lost connection.',
+    'online.err.version': 'Game versions differ. Both players should refresh the page.',
+    'online.err.full': 'This room is already full.',
+    'online.note': 'Peer-to-peer over the internet · Wi-Fi works best',
+
+    'char.teddy': 'Teddy',
+    'char.teddy.role': 'Plush bruiser',
+    'char.teddy.sp': 'Bear Slam',
+    'char.robo': 'Robo',
+    'char.robo.role': 'Tin zoner',
+    'char.robo.sp': 'Rocket Punch',
+    'char.hunkrabok': 'Hun Krabok',
+    'char.hunkrabok.role': 'Rod-puppet speedster',
+    'char.hunkrabok.sp': 'Bamboo Cyclone',
+    'char.siakabal': 'Sia Kabal',
+    'char.siakabal.role': 'Clay curse heavy',
+    'char.siakabal.sp': 'Hex of Misfortune',
+    'char.voodoo': 'Voodoo',
+    'char.kokeshi': 'Kokeshi',
+    'char.chaowang': 'Chao Wang',
+    'char.nangkwak': 'Nang Kwak',
+  },
+};
+
+let lang = storage.get('lang', 'th');
+if (!DICT[lang]) lang = 'th';
+const listeners = new Set();
+
+export function t(key, vars) {
+  const s = DICT[lang][key] ?? DICT.en[key] ?? key;
+  return vars ? s.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '') : s;
+}
+
+export function getLang() {
+  return lang;
+}
+
+export function setLang(l) {
+  if (!DICT[l] || l === lang) return;
+  lang = l;
+  storage.set('lang', l);
+  document.documentElement.lang = l;
+  listeners.forEach((fn) => fn(l));
+}
+
+export function onLangChange(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}

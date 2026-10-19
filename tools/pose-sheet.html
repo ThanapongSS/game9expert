@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Pose sheet</title>
+<style>body{margin:0;background:#f3ead8}</style></head>
+<body><canvas id="c" width="1500" height="900"></canvas>
+<script type="module">
+import { drawDoll, drawShadow } from '../src/render/puppet.js';
+import { GROUND } from '../src/config.js';
+const ctx = document.getElementById('c').getContext('2d');
+const ids = ['teddy', 'robo', 'hunkrabok', 'siakabal'];
+const states = [
+  { state: 'idle' }, { state: 'walk', x: 20 }, { state: 'attack', move: 'punch', sf: 7 }, { state: 'attack', move: 'kick', sf: 10 },
+  { state: 'block' }, { state: 'hitstun', sf: 2, stun: 10 }, { state: 'jump', vy: -6, air: true }, { state: 'down' }, { state: 'win' }, { state: 'ko', sf: 40 },
+];
+ids.forEach((id, r) => {
+  states.forEach((s, c) => {
+    const ox = 75 + c * 145, oy = 200 + r * 220 - GROUND;
+    ctx.save(); ctx.translate(ox - 0, oy);
+    const f = { idx: 0, charId: id, x: 0, y: GROUND, facing: 1, flash: 0, sf: 0, vy: 0, stun: 0, air: false, ...s };
+    drawShadow(ctx, f);
+    drawDoll(ctx, f, { time: 0.3, alt: r % 2 === 1 && c === 0 });
+    ctx.restore();
+  });
+});
+document.title = 'done';
+</script></body></html>
