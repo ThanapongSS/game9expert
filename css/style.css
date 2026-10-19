@@ -329,7 +329,7 @@ label {
 }
 
 .preview {
-  width: min(46vh, 15rem);
+  width: min(46vmin, 15rem);
   height: auto;
   aspect-ratio: 1;
   flex-shrink: 0;
@@ -412,7 +412,7 @@ label {
 }
 
 .card .portrait {
-  width: min(100%, 17vh);
+  width: min(100%, 17vmin);
   height: auto;
   aspect-ratio: 1;
 }
@@ -495,7 +495,7 @@ label {
 }
 
 .stage-card .thumb {
-  width: min(11rem, 22vw, 30vh);
+  width: min(11rem, 22vw, 30vmin);
   height: auto;
   aspect-ratio: 16 / 9;
   border-radius: 0.5rem;
@@ -522,7 +522,7 @@ label {
 }
 
 .vs-side canvas {
-  width: min(55vh, 17rem);
+  width: min(55vmin, 17rem);
   height: auto;
   aspect-ratio: 1;
   filter: drop-shadow(0 0.4rem 0 rgba(0, 0, 0, 0.3));
@@ -589,7 +589,7 @@ label {
 
 .result {
   justify-content: flex-end;
-  padding-bottom: calc(var(--sb) + 7vh);
+  padding-bottom: calc(var(--sb) + 7vmin);
 }
 
 .result-panel {
@@ -756,10 +756,10 @@ label {
 
 .dpad {
   position: absolute;
-  left: calc(var(--sl) + 3vh);
-  bottom: calc(var(--sb) + 3vh);
-  width: 40vh;
-  height: 40vh;
+  left: calc(var(--sl) + 3vmin);
+  bottom: calc(var(--sb) + 3vmin);
+  width: 40vmin;
+  height: 40vmin;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
   border: 2px solid rgba(255, 255, 255, 0.32);
@@ -769,7 +769,7 @@ label {
 
 .arrow {
   position: absolute;
-  font-size: 6vh;
+  font-size: 6vmin;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1;
   transition: transform 0.06s, color 0.06s;
@@ -812,23 +812,23 @@ label {
 
 .btns {
   position: absolute;
-  right: calc(var(--sr) + 3vh);
-  bottom: calc(var(--sb) + 3vh);
+  right: calc(var(--sr) + 3vmin);
+  bottom: calc(var(--sb) + 3vmin);
   display: grid;
-  grid-template-columns: repeat(2, 19vh);
-  gap: 2.2vh;
+  grid-template-columns: repeat(2, 19vmin);
+  gap: 2.2vmin;
   pointer-events: auto;
   touch-action: none;
 }
 
 .tb {
-  width: 19vh;
-  height: 19vh;
+  width: 19vmin;
+  height: 19vmin;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8vh;
+  font-size: 8vmin;
   background: rgba(255, 255, 255, 0.16);
   border: 2px solid rgba(255, 255, 255, 0.42);
   transition: transform 0.05s, background 0.05s;
@@ -863,22 +863,22 @@ label {
 
 @keyframes glow {
   to {
-    box-shadow: 0 0 2.5vh 1vh rgba(255, 220, 80, 0.8);
+    box-shadow: 0 0 2.5vmin 1vmin rgba(255, 220, 80, 0.8);
   }
 }
 
 #controls .pause {
   position: absolute;
-  top: calc(var(--st) + 19.5vh);
+  top: calc(var(--st) + 19.5vmin);
   left: 50%;
   translate: -50% 0;
-  width: 8vh;
-  height: 8vh;
+  width: 8vmin;
+  height: 8vmin;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.4);
   background: rgba(0, 0, 0, 0.3);
   color: #fff;
-  font-size: 3vh;
+  font-size: 3vmin;
   pointer-events: auto;
 }
 
@@ -909,9 +909,42 @@ label {
   }
 }
 
+#rotate .btn {
+  margin-top: 1.4rem;
+}
+
 @media (orientation: portrait) and (pointer: coarse) {
   #rotate {
     display: flex;
+  }
+
+  body.portrait-ok #rotate {
+    display: none;
+  }
+}
+
+/* portrait play: game on top, controls below */
+@media (orientation: portrait) {
+  .menu,
+  .vs {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .select-body {
+    grid-template-columns: 1fr;
+    margin-top: 3.2rem;
+  }
+
+  .online-body,
+  .stages {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  #controls .pause {
+    top: auto;
+    bottom: calc(var(--sb) + 22vmin);
   }
 }
 

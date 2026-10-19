@@ -49,6 +49,7 @@ class App {
       if (document.hidden) this.pause(true);
     });
     document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.getElementById('rotate-skip')?.addEventListener('click', () => document.body.classList.add('portrait-ok'));
     this.applyStaticText();
 
     this.setSession(new AttractSession());
@@ -334,8 +335,9 @@ class App {
     this.canvas.height = Math.round(h * dpr);
     const scale = Math.min(w / W, h / H);
     const ox = (w - W * scale) / 2;
-    const oy = (h - H * scale) / 2;
-    this.vp = { dpr, scale, ox, oy, x0: -ox / scale, y0: -oy / scale, x1: W + ox / scale, y1: H + oy / scale, q: scale * dpr };
+    // In portrait the arena sits near the top, leaving room for the thumbs below.
+    const oy = h > w ? Math.min((h - H * scale) / 2, h * 0.1) : (h - H * scale) / 2;
+    this.vp = { dpr, scale, ox, oy, x0: -ox / scale, y0: -oy / scale, x1: (w - ox) / scale, y1: (h - oy) / scale, q: scale * dpr };
   }
 
   loop(ts) {

@@ -160,6 +160,22 @@ try {
   await sleep(300);
   await shot('12-portrait');
   check(await page.isVisible('#rotate'), 'portrait shows rotate overlay');
+  await page.tap('#rotate-skip');
+  check(!(await page.isVisible('#rotate')), '"play in portrait" dismisses the overlay');
+  await page.tap('.head .btn');
+  await page.waitForSelector('.screen.menu');
+  await page.tap('.menu-list .btn.orange');
+  await page.waitForSelector('.screen.select');
+  await page.tap('.btn.confirm');
+  await page.waitForSelector('.screen.select');
+  await page.tap('.btn.confirm');
+  await page.waitForSelector('.screen.setup');
+  await page.tap('.setup .btn.green');
+  await page.waitForSelector('.screen.vs', { state: 'detached', timeout: 6000 });
+  await sleep(2500);
+  await shot('13-portrait-fight');
+  s = await state();
+  check(s.phase === 'fight', 'portrait fight runs');
 
   await browser.close();
 } catch (e) {

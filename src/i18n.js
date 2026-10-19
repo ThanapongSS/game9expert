@@ -6,6 +6,7 @@ const DICT = {
     'game.sub': 'DOLL FIGHTERS',
     'title.tap': 'แตะเพื่อเริ่ม',
     'rotate': 'หมุนมือถือเป็นแนวนอนเพื่อเล่น',
+    'rotate.skip': 'เล่นแนวตั้งไปก่อน',
     'back': 'กลับ',
 
     'menu.quick': 'สู้ด่วน',
@@ -128,6 +129,7 @@ const DICT = {
     'game.sub': 'ศึกตุ๊กตา',
     'title.tap': 'Tap to start',
     'rotate': 'Rotate your phone to landscape',
+    'rotate.skip': 'Play in portrait anyway',
     'back': 'Back',
 
     'menu.quick': 'Quick Match',
