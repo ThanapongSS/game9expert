@@ -3,7 +3,9 @@ import { drawDoll, drawShadow } from './puppet.js';
 import { DOLLS } from './dolls.js';
 import { Effects } from './fx.js';
 import { Hud } from './hud.js';
-import { capsule, circle, ellipse } from './draw.js';
+import { capsule, circle, ellipse, outlinedText } from './draw.js';
+import { CHARACTERS } from '../characters/index.js';
+import { t as t_ } from '../i18n.js';
 
 // Draws a match "view": either the live match object or an online snapshot.
 export class Renderer {
@@ -45,8 +47,13 @@ export class Renderer {
     const order = [...view.f].sort((a, b) => priority(a) - priority(b));
     for (const f of order) {
       if (f.slow > 0) drawCurseAura(ctx, f, t);
+      if (f.state === 'special' && f.move === 'giantFist' && f.sp === 1) drawSpeedLines(ctx, f, t);
       const rocketOut = view.proj.some((p) => p.owner === f.idx && p.kind === 'rocket');
       drawDoll(ctx, f, { time: t, alt: alt[f.idx], hideForearm: rocketOut });
+      if (f.scared > 0) drawFright(ctx, f, t);
+    }
+    for (const f of view.f) {
+      if (f.state === 'special' && f.move === 'flameBeam' && f.sp === 1) drawFlameBeam(ctx, f, vp, t);
     }
     for (const p of view.proj) drawProjectile(ctx, p, view, alt, t);
     this.fx.draw(ctx);
@@ -82,6 +89,69 @@ function drawCurseAura(ctx, f, t) {
   }
 }
 
+// Muay Thai's dash.
+function drawSpeedLines(ctx, f, t) {
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 5; i++) {
+    const y = f.y - 40 - i * 24;
+    const len = 50 + ((t * 600 + i * 37) % 40);
+    const x = f.x - f.facing * (30 + (i % 2) * 14);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - f.facing * len, y);
+    ctx.stroke();
+  }
+}
+
+// Little ghosts circling a doll frozen by Mae Nak's call.
+function drawFright(ctx, f, t) {
+  const h = CHARACTERS[f.charId].body.h;
+  for (let i = 0; i < 3; i++) {
+    const a = t * 4 + (i * Math.PI * 2) / 3;
+    const x = f.x + Math.cos(a) * 34;
+    const y = f.y - h - 14 + Math.sin(a) * 8;
+    ctx.globalAlpha = 0.85;
+    circle(ctx, x, y, 8, '#f4f0ff', '#6a5a8a', 1.5);
+    ctx.beginPath();
+    ctx.moveTo(x - 8, y);
+    ctx.lineTo(x - 8, y + 10);
+    ctx.lineTo(x - 3, y + 6);
+    ctx.lineTo(x + 2, y + 11);
+    ctx.lineTo(x + 8, y + 6);
+    ctx.lineTo(x + 8, y);
+    ctx.closePath();
+    ctx.fillStyle = '#f4f0ff';
+    ctx.fill();
+    circle(ctx, x - 3, y - 1, 1.4, '#2b2433');
+    circle(ctx, x + 3, y - 1, 1.4, '#2b2433');
+  }
+  ctx.globalAlpha = 1;
+}
+
+// Naga's fire beam, from the mouth to the edge of the screen.
+function drawFlameBeam(ctx, f, vp, t) {
+  const y = f.y - 92;
+  const x0 = f.x + f.facing * 75;
+  const x1 = f.facing > 0 ? vp.x1 + 20 : vp.x0 - 20;
+  const len = Math.abs(x1 - x0);
+  const h = (22 + Math.sin(t * 60) * 3) * Math.min(1, (f.sf + 1) / 4);
+  const g = ctx.createLinearGradient(0, y - h, 0, y + h);
+  g.addColorStop(0, 'rgba(255,80,40,0)');
+  g.addColorStop(0.28, 'rgba(255,96,40,0.9)');
+  g.addColorStop(0.5, '#fff6b0');
+  g.addColorStop(0.72, 'rgba(255,96,40,0.9)');
+  g.addColorStop(1, 'rgba(255,80,40,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(Math.min(x0, x1), y - h, len, h * 2);
+  for (let i = 0; i < 14; i++) {
+    const d = (t * 900 + i * 83) % len;
+    circle(ctx, x0 + f.facing * d, y + Math.sin(t * 20 + i) * h * 0.45, h * 0.55, i % 2 ? 'rgba(255,200,80,0.7)' : 'rgba(255,120,50,0.6)');
+  }
+  circle(ctx, x0, y, h * 1.25, 'rgba(255,240,180,0.9)');
+}
+
 function drawProjectile(ctx, p, view, alt, t) {
   if (p.kind === 'rocket') {
     const pal = DOLLS.robo.pal[alt[p.owner] ? 1 : 0];
@@ -113,5 +183,20 @@ function drawProjectile(ctx, p, view, alt, t) {
     ctx.arc(p.x, p.y + 8, 6, 0, Math.PI);
     ctx.strokeStyle = '#fff7a0';
     ctx.stroke();
+  } else if (p.kind === 'scream') {
+    // Mae Nak's haunting call: ripples rolling along the floor.
+    const d = Math.sign(p.vx);
+    const start = d > 0 ? -Math.PI / 2 : Math.PI / 2;
+    ctx.lineWidth = 4;
+    for (let i = 0; i < 4; i++) {
+      const k = (t * 3 + i * 0.25) % 1;
+      ctx.globalAlpha = 0.85 * (1 - k);
+      ctx.strokeStyle = i % 2 ? '#d9c8ff' : '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(p.x - d * k * 34, p.y, 12 + k * 18, 34 + k * 8, 0, start, start + Math.PI);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    outlinedText(ctx, t_('fx.phimak'), p.x, p.y - 58 + Math.sin(t * 6) * 3, { size: 18, fill: '#ece2ff', stroke: '#3a1a5a', sw: 4 });
   }
 }

@@ -14,6 +14,7 @@ import {
 } from './ui/screens.js';
 
 const STEP = 1 / FPS;
+const ARCADE_STAGES = 3;
 const pickOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const shuffle = (arr) => arr.map((v) => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
 
@@ -268,7 +269,7 @@ class App {
       onConfirm: (id) => {
         this.prefs.p1 = id;
         this.savePrefs();
-        this.arcade = { p1: id, opps: shuffle(ROSTER.filter((c) => c !== id)), i: 0 };
+        this.arcade = { p1: id, opps: shuffle(ROSTER.filter((c) => c !== id)).slice(0, ARCADE_STAGES), i: 0 };
         this.arcadeFight();
       },
     });

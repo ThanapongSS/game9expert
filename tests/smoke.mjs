@@ -46,7 +46,7 @@ try {
   const state = () => page.evaluate(() => {
     const s = window.__app.session;
     const m = s.match;
-    return m && { phase: m.phase, hp: m.f.map((f) => f.hp), x: m.f.map((f) => f.x), attract: !!s.attract };
+    return m && { phase: m.phase, hp: m.f.map((f) => f.hp), maxHp: m.f.map((f) => f.maxHp), x: m.f.map((f) => f.x), attract: !!s.attract };
   });
 
   await page.goto(`http://127.0.0.1:${PORT}/index.html`);
@@ -61,7 +61,8 @@ try {
 
   await page.tap('.menu-list .btn.orange');
   await page.waitForSelector('.screen.select');
-  await page.tap('.card[data-char="hunkrabok"]');
+  check((await page.$$('.card:not(.locked)')).length === 8, '8 playable dolls on the select screen');
+  await page.tap('.card[data-char="yogurt"]');
   await sleep(400);
   await shot('03-select');
   await page.tap('.btn.confirm');
@@ -102,7 +103,7 @@ try {
   }
   await shot('06-fight');
   s = await state();
-  check(s.hp[1] < 1150 || s.hp[0] < 900, `damage was dealt (hp ${s.hp.join(' / ')})`);
+  check(s.hp[1] < s.maxHp[1] || s.hp[0] < s.maxHp[0], `damage was dealt (hp ${s.hp.join(' / ')})`);
 
   // Pause and resume
   await page.tap('#controls .pause');

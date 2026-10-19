@@ -65,6 +65,7 @@ export class AIController {
     const toward = op.x > me.x ? IN.R : IN.L;
     const away = toward === IN.R ? IN.L : IN.R;
     const gap = Math.abs(op.x - me.x) - (CHARACTERS[me.charId].body.w + CHARACTERS[op.charId].body.w) / 2;
+    const reach = CHARACTERS[me.charId].reach;
     this.held = 0;
 
     const incoming = m.proj.find((p) => p.owner !== me.idx && Math.sign(me.x - p.x) === Math.sign(p.vx) && Math.abs(me.x - p.x) < 280);
@@ -91,7 +92,7 @@ export class AIController {
         return;
       }
     }
-    if (gap < 30) {
+    if (gap < 30 + reach) {
       const roll = r();
       if (roll < 0.5) this.press(IN.P, m);
       else if (roll < 0.8) this.press(IN.K, m);
@@ -104,7 +105,7 @@ export class AIController {
       }
       return;
     }
-    if (gap < 70) {
+    if (gap < 70 + reach) {
       if (r() < c.aggro) this.press(IN.K, m);
       else this.held = toward;
       return;

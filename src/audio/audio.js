@@ -88,6 +88,7 @@ export const sfx = {
   swing: () => noise({ dur: 0.09, vol: 0.18, f0: 600, f1: 2200, q: 2 }),
   hit(mat, heavy) {
     const v = heavy ? 1 : 0.7;
+    mat = { fur: 'plush', ghost: 'plush', scale: 'wood' }[mat] || mat;
     tone({ type: 'sine', f0: heavy ? 160 : 220, f1: 50, dur: heavy ? 0.25 : 0.14, vol: 0.6 * v });
     switch (mat) {
       case 'metal':
@@ -121,7 +122,12 @@ export const sfx = {
     [0, 0.08, 0.16, 0.24].forEach((at, i) => tone({ type: 'square', f0: [523, 659, 784, 1047][i], dur: 0.12, vol: 0.1, at }));
   },
   shoot(kind) {
-    if (kind === 'curse') {
+    if (kind === 'scream') {
+      // a wavering, descending ghostly wail
+      tone({ type: 'sine', f0: 880, f1: 330, dur: 1.1, vol: 0.14, attack: 0.08 });
+      tone({ type: 'sine', f0: 905, f1: 340, dur: 1.1, vol: 0.12, attack: 0.08 });
+      tone({ type: 'triangle', f0: 440, f1: 220, dur: 1.0, vol: 0.08, at: 0.15, attack: 0.1 });
+    } else if (kind === 'curse') {
       tone({ type: 'sawtooth', f0: 300, f1: 90, dur: 0.5, vol: 0.12 });
       tone({ type: 'sine', f0: 600, f1: 300, dur: 0.5, vol: 0.1 });
     } else {
@@ -130,6 +136,10 @@ export const sfx = {
     }
   },
   whoosh: () => noise({ dur: 0.4, vol: 0.3, f0: 300, f1: 1800, q: 1.5 }),
+  beam() {
+    noise({ dur: 0.6, vol: 0.45, type: 'lowpass', f0: 1800, f1: 400 });
+    tone({ type: 'sawtooth', f0: 110, f1: 70, dur: 0.6, vol: 0.18 });
+  },
   slam() {
     tone({ type: 'sine', f0: 90, f1: 30, dur: 0.5, vol: 0.8 });
     noise({ dur: 0.4, vol: 0.5, type: 'lowpass', f0: 800, f1: 100 });
@@ -171,6 +181,7 @@ export function playEvents(events) {
       case 'thud':
       case 'special':
       case 'whoosh':
+      case 'beam':
       case 'slam':
       case 'clash':
       case 'ready':

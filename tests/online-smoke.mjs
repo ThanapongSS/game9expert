@@ -163,7 +163,7 @@ try {
 
   const hostMatch = () => host.evaluate(() => {
     const m = window.__app.session.match;
-    return { phase: m.phase, x: m.f.map((f) => f.x), hp: m.f.map((f) => f.hp), chars: m.f.map((f) => f.charId) };
+    return { phase: m.phase, x: m.f.map((f) => f.x), hp: m.f.map((f) => f.hp), maxHp: m.f.map((f) => f.maxHp), chars: m.f.map((f) => f.charId) };
   });
   const guestView = () => guest.evaluate(() => {
     const v = window.__app.session.view();
@@ -224,7 +224,7 @@ try {
   check(true, 'rematch starts on both');
   await sleep(2400);
   hm = await hostMatch();
-  check(hm.hp[1] === 1000 && hm.phase !== 'result', 'rematch resets the match');
+  check(hm.hp[1] === hm.maxHp[1] && hm.phase !== 'result', 'rematch resets the match');
 
   // Guest leaves → host is told.
   await guest.tap('#controls .pause');

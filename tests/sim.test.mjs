@@ -195,3 +195,63 @@ test('lethal chip damage K.O.s a blocking doll', () => {
   assert.equal(m.f[1].hp, 0);
   assert.equal(m.phase, 'ko');
 });
+
+test("Mae Nak's haunting call can't be blocked and freezes the victim", () => {
+  const m = fightReady('maenak', 'teddy');
+  placeClose(m, 250);
+  m.f[0].energy = ENERGY_MAX;
+  const hp0 = m.f[1].hp;
+  const ev = run(m, 70, (i) => [i === 0 ? IN.S : 0, IN.B]);
+  assert.ok(ev.some((e) => e.type === 'hit' && e.att === 0), 'call should hit through block');
+  assert.ok(m.f[1].hp < hp0);
+  assert.ok(m.f[1].scared > 0, 'victim should be scared');
+});
+
+test("a well-timed jump clears Mae Nak's call", () => {
+  // Some jump timing must clear the wave for every doll (it's unblockable).
+  for (const id of ROSTER) {
+    let dodged = false;
+    for (let jumpAt = 30; jumpAt < 80 && !dodged; jumpAt++) {
+      const m = fightReady('maenak', id);
+      placeClose(m, 320);
+      m.f[0].energy = ENERGY_MAX;
+      const hp0 = m.f[1].hp;
+      run(m, 130, (i) => [i === 0 ? IN.S : 0, i === jumpAt ? IN.U | IN.L : 0]);
+      if (m.f[1].hp === hp0 && m.proj.length === 0) dodged = true;
+    }
+    assert.ok(dodged, `${id} can never jump over the call`);
+  }
+});
+
+test("Naga's flame beam hits five times and knocks down", () => {
+  const m = fightReady('naga', 'robo');
+  placeClose(m, 400);
+  m.f[0].energy = ENERGY_MAX;
+  const ev = run(m, 90, tap(IN.S));
+  const hits = ev.filter((e) => e.type === 'hit' && e.att === 0);
+  assert.equal(hits.length, 5);
+  assert.ok(['launch', 'down', 'getup'].includes(m.f[1].state), `state ${m.f[1].state}`);
+});
+
+test("Yogurt's fluff roll hits and bounces back", () => {
+  const m = fightReady('yogurt', 'siakabal');
+  placeClose(m, 300);
+  m.f[0].energy = ENERGY_MAX;
+  let bounced = false;
+  for (let i = 0; i < 120; i++) {
+    stepMatch(m, [i === 0 ? IN.S : 0, 0]);
+    if (m.f[0].state === 'special' && m.f[0].sp === 2 && m.f[0].vx * m.f[0].facing < 0) bounced = true;
+  }
+  assert.ok(m.f[1].hp < m.f[1].maxHp);
+  assert.ok(bounced, 'should bounce back after the hit');
+});
+
+test("Muay Thai's giant fist dash stops on contact", () => {
+  const m = fightReady('muaythai', 'naga');
+  placeClose(m, 250);
+  m.f[0].energy = ENERGY_MAX;
+  const ev = run(m, 90, tap(IN.S));
+  const hit = ev.find((e) => e.type === 'hit' && e.att === 0);
+  assert.ok(hit && hit.dmg === 145 && hit.heavy);
+  assert.ok(m.f[0].x < m.f[1].x, 'muay thai should not pass through');
+});

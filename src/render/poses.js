@@ -44,6 +44,13 @@ export const POSES = {
   spin: pose({ lean: 0, aF1: 95, aF2: 0, aB1: 95, aB2: 0, lF1: 20, lF2: -20, lB1: -20, lB2: -20 }),
   curseCharge: pose({ lean: -6, head: -10, aF1: 150, aF2: 30, aB1: 140, aB2: 40, lF1: 30, lF2: -55, lB1: -26, lB2: -30 }),
   curseCast: pose({ lean: 14, head: 6, aF1: 100, aF2: 15, aB1: 105, aB2: 10, lF1: 34, lF2: -50, lB1: -30, lB2: -14 }),
+  waiKhru: pose({ lean: 14, head: 12, aF1: 62, aF2: 118, aB1: 58, aB2: 124, lF1: 46, lF2: -88, lB1: -10, lB2: -54 }),
+  giantPunch: pose({ lean: 28, head: 4, aF1: 92, aF2: -4, aB1: -10, aB2: 90, lF1: 52, lF2: -62, lB1: -46, lB2: -4 }),
+  screamCharge: pose({ lean: -8, head: -18, aF1: 125, aF2: 40, aB1: 115, aB2: 40, lift: 6 }),
+  screamCast: pose({ lean: 12, head: 10, aF1: 98, aF2: -8, aB1: 92, aB2: -4, lF1: 30, lF2: -40, lB1: -20, lB2: -30, lift: 8 }),
+  breathCharge: pose({ lean: -14, head: -24, aF1: 40, aF2: 60, aB1: 30, aB2: 70 }),
+  breathFire: pose({ lean: 35, head: 16, aF1: 60, aF2: 50, aB1: 50, aB2: 60 }),
+  curl: pose({ lean: 40, head: 30, aF1: 60, aF2: 120, aB1: 50, aB2: 120, lF1: 80, lF2: -140, lB1: 50, lB2: -140 }),
 };
 
 export function mix(a, b, t) {
@@ -89,6 +96,21 @@ function specialPose(f) {
     case 'curse':
       if (f.sf < 16) return mix(P.idle, P.curseCharge, ease(f.sf / 12));
       return mix(P.curseCast, P.idle, ease((f.sf - 22) / 16));
+    case 'giantFist':
+      if (f.sp === 0) return mix(P.idle, P.waiKhru, ease(f.sf / 8));
+      if (f.sp === 1) return P.giantPunch;
+      return mix(P.giantPunch, P.idle, ease(f.sf / 20));
+    case 'hauntingCall':
+      if (f.sf < 18) return mix(P.idle, P.screamCharge, ease(f.sf / 12));
+      return mix(P.screamCast, P.idle, ease((f.sf - 28) / 16));
+    case 'flameBeam':
+      if (f.sp === 0) return mix(P.idle, P.breathCharge, ease(f.sf / 14));
+      if (f.sp === 1) return P.breathFire;
+      return mix(P.breathFire, P.idle, ease(f.sf / 18));
+    case 'fluffRoll':
+      if (f.sp === 0) return mix(P.idle, P.curl, ease(f.sf / 8));
+      if (f.sp === 3) return mix(P.curl, P.idle, ease(f.sf / 14));
+      return P.curl;
     default:
       return P.idle;
   }

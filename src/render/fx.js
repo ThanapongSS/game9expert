@@ -8,6 +8,9 @@ const MATERIAL = {
   metal: { kind: 'spark', colors: ['#ffe066', '#ffb020', '#ffffff'] },
   wood: { kind: 'chip', colors: ['#e6c873', '#b8892a', '#f2c94c'] },
   clay: { kind: 'chip', colors: ['#c9733d', '#9e5428', '#eaa772'] },
+  ghost: { kind: 'fluff', colors: ['#e6eeff', '#c9b8ff', '#ffffff'] },
+  scale: { kind: 'chip', colors: ['#1f9e6e', '#f2c94c', '#14714d'] },
+  fur: { kind: 'fluff', colors: ['#ffffff', '#fbfaf6', '#f2ede4'] },
 };
 
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -69,7 +72,8 @@ export class Effects {
           break;
         case 'shoot': {
           const f = view.f[e.idx];
-          this.burst(f.x + f.facing * 50, f.y - (e.kind === 'curse' ? 96 : 118), 8, { kind: 'dust', colors: e.kind === 'curse' ? ['rgba(120,40,160,0.7)'] : ['rgba(230,230,230,0.8)'], speed: 120, r: 9, g: -40, life: 0.45 });
+          const tint = { curse: 'rgba(120,40,160,0.7)', scream: 'rgba(220,210,255,0.6)' }[e.kind] || 'rgba(230,230,230,0.8)';
+          this.burst(f.x + f.facing * 50, f.y - (e.kind === 'rocket' ? 118 : 96), 8, { kind: 'dust', colors: [tint], speed: 120, r: 9, g: -40, life: 0.45 });
           break;
         }
         case 'clash':
@@ -79,6 +83,9 @@ export class Effects {
           break;
         case 'special':
           this.dim = 1;
+          break;
+        case 'beam':
+          this.trauma = Math.min(1, this.trauma + 0.45);
           break;
         default:
           break;

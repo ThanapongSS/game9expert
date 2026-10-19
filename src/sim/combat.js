@@ -42,7 +42,7 @@ export function applyHit(m, att, def, h, dir, ev) {
   const chip = Math.round(h.dmg * 0.15);
 
   // Lethal chip damage is not blocked, so a turtling doll at 1 HP can still be K.O.'d.
-  if (guarding && def.hp > chip) {
+  if (guarding && def.hp > chip && !h.unblockable) {
     def.hp -= chip;
     def.state = 'blockstun';
     def.sf = 0;
@@ -65,6 +65,7 @@ export function applyHit(m, att, def, h, dir, ev) {
   def.flash = 8;
   def.move = null;
   if (h.slow) def.slow = h.slow;
+  if (h.scare) def.scared = h.scare;
 
   if (def.hp === 0) {
     def.state = 'ko';

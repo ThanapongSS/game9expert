@@ -15,7 +15,7 @@ export function createFighter(idx, charId) {
     facing: idx === 0 ? 1 : -1, air: false,
     hp: c.hp, maxHp: c.hp, energy: 0,
     state: 'idle', sf: 0, move: null, hits: 0, hw: -1, sp: 0, airAtk: false,
-    stun: 0, slow: 0, invul: 0, flash: 0, combo: 0,
+    stun: 0, slow: 0, scared: 0, invul: 0, flash: 0, combo: 0,
     prev: 0, buf: 0, bufT: 0, walkDir: 0,
   };
 }
@@ -116,6 +116,7 @@ export function control(f, inp, opp, m, ev) {
   }
   f.sf++;
   if (f.slow > 0) f.slow--;
+  if (f.scared > 0) f.scared--;
   if (f.invul > 0) f.invul--;
   if (f.flash > 0) f.flash--;
   const c = CHARACTERS[f.charId];

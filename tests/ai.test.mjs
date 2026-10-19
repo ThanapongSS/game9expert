@@ -31,8 +31,8 @@ test('Hard CPU beats Easy CPU most of the time', () => {
   let hardWins = 0;
   const games = 16;
   for (let i = 0; i < games; i++) {
-    const p1 = ROSTER[i % 4];
-    const p2 = ROSTER[(i + 1) % 4];
+    const p1 = ROSTER[i % ROSTER.length];
+    const p2 = ROSTER[(i + 3) % ROSTER.length];
     const { m } = play(p1, p2, 'hard', 'easy', 100 + i);
     if (m.winner === 0) hardWins++;
   }

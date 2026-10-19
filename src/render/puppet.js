@@ -55,7 +55,7 @@ export function drawDoll(ctx, f, opts = {}) {
   const flashing = f.flash > 0 && f.flash % 4 < 2;
   const pal = flashing ? doll.flashPal : doll.pal[alt ? 1 : 0];
   const headless = doll.detachHeadOnKO && f.state === 'ko' && !f.air;
-  const o = { time, expr: expressionFor(f), blink: isBlinking(time, f.idx || 0), hideForearm, headless };
+  const o = { time, expr: expressionFor(f), blink: isBlinking(time, f.idx || 0), hideForearm, headless, fighter: f };
 
   ctx.save();
   ctx.translate(f.x, f.y);
@@ -92,7 +92,7 @@ export function drawPortrait(ctx, charId, x, y, size, { alt = false, expr = 'nor
   const doll = DOLLS[charId];
   const s = size / (doll.rig.headR * 2.4);
   ctx.save();
-  ctx.translate(x, y + (charId === 'hunkrabok' ? size * 0.25 : 0));
+  ctx.translate(x, y + size * (doll.portraitDy || 0));
   ctx.scale(s * facing, s);
   doll.head(ctx, doll.pal[alt ? 1 : 0], { time, expr, blink: false });
   ctx.restore();
