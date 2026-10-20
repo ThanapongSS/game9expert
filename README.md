@@ -43,6 +43,16 @@
 
 ไม่ต้อง build ไม่ต้องลง Node — เป็นไฟล์ static ล้วน
 
+## ▲ Deploy ขึ้น Vercel (ทางเลือก, ทำครั้งเดียว)
+
+1. เข้า https://vercel.com/new แล้ว login ด้วย GitHub
+2. **Import Git Repository** → เลือก `ThanapongSS/game9expert` (ถ้าไม่เห็น ให้กด *Adjust GitHub App Permissions* แล้วให้สิทธิ์ repo นี้)
+3. Framework Preset: **Other** · Build Command และ Output Directory: เว้นว่าง → **Deploy**
+4. ได้ลิงก์แบบ `https://game9expert-xxxx.vercel.app` (เปลี่ยนชื่อได้ใน Settings → Domains)
+
+หลังจากนั้นทุกครั้งที่ push ขึ้น GitHub, Vercel จะ deploy ให้เองอัตโนมัติ
+`vercel.json` ตั้งให้ `sw.js` ไม่ถูก cache เพื่อให้มือถือได้เวอร์ชันใหม่ทันที ส่วน `.vercelignore` ไม่ส่งโฟลเดอร์ `tests/` และ `tools/` ขึ้นเว็บ
+
 ## 🌐 เรื่อง Online (อ่านก่อนเล่นกับเพื่อน)
 
 - ใช้ **WebRTC แบบ P2P** ผ่าน [PeerJS](https://peerjs.com) (signalling server ฟรีของ PeerJS) — ไม่มีค่าใช้จ่าย ไม่ต้องมี server ของเราเอง
