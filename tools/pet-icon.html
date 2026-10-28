@@ -1,0 +1,48 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Pet icon</title>
+<style>body{margin:0;background:transparent}canvas{display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+// Renders the Yogurt's House app icon. ?size=512&maskable=1 — used by tools/make-icons.mjs pet.
+import { drawPet } from '../pet/src/render/pets.js';
+const q = new URLSearchParams(location.search);
+const size = +(q.get('size') || 512);
+const maskable = q.get('maskable') === '1';
+const c = document.getElementById('c');
+c.width = c.height = size;
+const ctx = c.getContext('2d');
+ctx.scale(size / 512, size / 512);
+const g = ctx.createLinearGradient(0, 0, 0, 512);
+g.addColorStop(0, '#ffe3c2');
+g.addColorStop(1, '#ffb08f');
+ctx.fillStyle = g;
+if (maskable) ctx.fillRect(0, 0, 512, 512);
+else {
+  ctx.beginPath();
+  ctx.roundRect(0, 0, 512, 512, 110);
+  ctx.fill();
+}
+const k = maskable ? 0.8 : 1;
+ctx.translate(256, 256);
+ctx.scale(k, k);
+ctx.translate(-256, -256);
+// a little house behind the cat
+ctx.fillStyle = '#fff7ec';
+ctx.beginPath();
+ctx.moveTo(86, 250); ctx.lineTo(256, 92); ctx.lineTo(426, 250); ctx.lineTo(426, 470); ctx.lineTo(86, 470);
+ctx.closePath();
+ctx.fill();
+ctx.strokeStyle = '#ff7a59';
+ctx.lineWidth = 26;
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.beginPath();
+ctx.moveTo(60, 262); ctx.lineTo(256, 80); ctx.lineTo(452, 262);
+ctx.stroke();
+ctx.fillStyle = '#ffd34d';
+ctx.beginPath();
+ctx.arc(256, 180, 26, 0, Math.PI * 2);
+ctx.fill();
+drawPet(ctx, { species: 'yogurt', level: 3, branch: null }, 262, 478, 410, { mood: 'idle', t: 0.26, shadow: false });
+document.title = 'done';
+</script></body></html>

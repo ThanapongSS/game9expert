@@ -1,5 +1,7 @@
-// Regenerates icons/*.png from tools/icon.html with headless Chromium.
-// usage: node tools/make-icons.mjs   (needs Playwright; set PLAYWRIGHT_PATH if needed)
+// Regenerates the app icons with headless Chromium.
+// usage: node tools/make-icons.mjs        → icons/*.png from tools/icon.html
+//        node tools/make-icons.mjs pet    → pet/icons/*.png from tools/pet-icon.html
+// (needs Playwright; set PLAYWRIGHT_PATH if needed)
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
@@ -20,7 +22,10 @@ for (const p of pw) {
 if (!chromium) throw new Error('Playwright not found; set PLAYWRIGHT_PATH');
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-mkdirSync(path.join(root, 'icons'), { recursive: true });
+const pet = process.argv[2] === 'pet';
+const outDir = pet ? 'pet/icons' : 'icons';
+const pageName = pet ? 'tools/pet-icon.html' : 'tools/icon.html';
+mkdirSync(path.join(root, outDir), { recursive: true });
 const PORT = 8800 + Math.floor(Math.random() * 100);
 const server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], { cwd: root, stdio: 'ignore' });
 await new Promise((r) => setTimeout(r, 800));
@@ -35,10 +40,10 @@ const ICONS = [
 try {
   for (const [file, size, maskable] of ICONS) {
     await page.setViewportSize({ width: size, height: size });
-    await page.goto(`http://127.0.0.1:${PORT}/tools/icon.html?size=${size}&maskable=${maskable ? 1 : 0}`);
+    await page.goto(`http://127.0.0.1:${PORT}/${pageName}?size=${size}&maskable=${maskable ? 1 : 0}`);
     await page.waitForFunction(() => document.title === 'done');
-    await page.locator('canvas').screenshot({ path: path.join(root, 'icons', file), omitBackground: true });
-    console.log('wrote icons/' + file);
+    await page.locator('canvas').screenshot({ path: path.join(root, outDir, file), omitBackground: true });
+    console.log(`wrote ${outDir}/${file}`);
   }
 } finally {
   await browser.close();

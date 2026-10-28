@@ -16,6 +16,7 @@ const DICT = {
     'menu.online': 'เล่นกับเพื่อน',
     'menu.online.d': 'ออนไลน์ด้วยรหัสห้อง',
     'menu.settings': 'ตั้งค่า',
+    'menu.pet': 'บ้านโยเกิร์ต',
 
     'select.you': 'เลือกตุ๊กตาของคุณ',
     'select.opp': 'เลือกคู่ต่อสู้',
@@ -148,6 +149,7 @@ const DICT = {
     'menu.online': 'Play a Friend',
     'menu.online.d': 'Online with a room code',
     'menu.settings': 'Settings',
+    'menu.pet': "Yogurt's House",
 
     'select.you': 'Choose your doll',
     'select.opp': 'Choose your opponent',

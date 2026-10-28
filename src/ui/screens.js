@@ -45,7 +45,9 @@ export function menuScreen({ onQuick, onArcade, onOnline, onSettings }) {
       button([h('b', null, '🥊 ' + t('menu.quick')), h('small', null, t('menu.quick.d'))], onQuick, 'big orange'),
       button([h('b', null, '🏆 ' + t('menu.arcade')), h('small', null, t('menu.arcade.d'))], onArcade, 'big purple'),
       button([h('b', null, '🌐 ' + t('menu.online')), h('small', null, t('menu.online.d'))], onOnline, 'big blue'),
-      button('⚙️ ' + t('menu.settings'), onSettings, 'small ghost')));
+      h('div', { class: 'row' },
+        button('⚙️ ' + t('menu.settings'), onSettings, 'small ghost'),
+        button('🏠 ' + t('menu.pet'), () => (location.href = 'pet/'), 'small ghost'))));
   return { el };
 }
 

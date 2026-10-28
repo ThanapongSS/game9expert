@@ -40,6 +40,7 @@ export function drawFoe(ctx, look, element, x, y, size, o = {}) {
   ctx.font = `${s * 0.82}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#5a3d2b'; // only used if the device lacks this emoji
   ctx.shadowColor = 'rgba(40,20,40,0.45)';
   ctx.shadowBlur = s * 0.06;
   ctx.shadowOffsetY = s * 0.03;
