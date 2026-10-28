@@ -50,7 +50,7 @@ export function setAudio(kind, on) {
   bus.gain.setTargetAtTime(on ? (kind === 'music' ? 0.22 : 0.7) : 0, ac.currentTime, 0.05);
 }
 
-function tone({ type = 'square', f0, f1 = f0, dur = 0.1, vol = 0.3, at = 0, bus = sfxBus, attack = 0.005 }) {
+export function tone({ type = 'square', f0, f1 = f0, dur = 0.1, vol = 0.3, at = 0, bus = sfxBus, attack = 0.005 }) {
   if (!ac) return;
   const t = ac.currentTime + at;
   const o = ac.createOscillator();
@@ -66,7 +66,7 @@ function tone({ type = 'square', f0, f1 = f0, dur = 0.1, vol = 0.3, at = 0, bus 
   o.stop(t + dur + 0.02);
 }
 
-function noise({ dur = 0.1, vol = 0.3, type = 'bandpass', f0 = 1000, f1 = f0, q = 1, at = 0, bus = sfxBus }) {
+export function noise({ dur = 0.1, vol = 0.3, type = 'bandpass', f0 = 1000, f1 = f0, q = 1, at = 0, bus = sfxBus }) {
   if (!ac) return;
   const t = ac.currentTime + at;
   const src = ac.createBufferSource();
@@ -211,7 +211,7 @@ function freq(n) {
   const midi = 12 * (+m[3] + 1) + NOTE[m[1]] + (m[2] ? 1 : 0);
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
-const seq = (s) => s.trim().split(/\s+/).map((x) => (x === '.' ? 0 : freq(x)));
+export const seq = (s) => s.trim().split(/\s+/).map((x) => (x === '.' ? 0 : freq(x)));
 
 const SONGS = {
   menu: {
@@ -249,9 +249,11 @@ let step = 0;
 let nextTime = 0;
 let timer = null;
 
+// name is a built-in song id or a song object { bpm, lead, bass, drums }.
 export function playMusic(name) {
-  if (song === SONGS[name]) return;
-  song = SONGS[name] || null;
+  const next = typeof name === 'string' ? SONGS[name] || null : name;
+  if (song === next) return;
+  song = next;
   step = 0;
   if (!ac) return;
   nextTime = ac.currentTime + 0.05;
