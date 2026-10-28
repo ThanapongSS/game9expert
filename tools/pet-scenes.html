@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Pet scenes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;600&display=swap">
+<style>body{margin:0;background:#222;font:14px system-ui}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+// Every area at every time of day with a pet on stage. ?t=seconds freezes time,
+// ?w=&h= sets the cell size (try 410x590 for an iPad-portrait shape).
+import { drawScene } from '../pet/src/render/scenes.js';
+import { drawPet } from '../pet/src/render/pets.js';
+import { AREA_IDS } from '../pet/src/data/areas.js';
+const q = new URLSearchParams(location.search);
+const W = +(q.get('w') || 400), H = +(q.get('h') || 300);
+const tods = (q.get('tods') || 'morning,day,evening,night').split(',');
+const pets = ['yogurt', 'phidam', 'pongfu', 'fuji', 'chako'];
+const c = document.getElementById('c');
+c.width = W * tods.length + (tods.length - 1) * 4;
+c.height = H * AREA_IDS.length + (AREA_IDS.length - 1) * 4;
+const ctx = c.getContext('2d');
+function frame(t) {
+  AREA_IDS.forEach((a, r) => tods.forEach((tod, i) => {
+    ctx.save();
+    ctx.translate(i * (W + 4), r * (H + 4));
+    ctx.beginPath();
+    ctx.rect(0, 0, W, H);
+    ctx.clip();
+    const s = drawScene(ctx, a, W, H, { tod, t });
+    drawPet(ctx, { species: pets[r], level: 6, branch: ['charm', 'fighter', 'sage', 'sage', 'fighter'][r] }, W / 2, s.stage, Math.min(W, H) * 0.5, { t, mood: tod === 'night' ? 'sleep' : 'idle' });
+    ctx.restore();
+  }));
+}
+const T = q.get('t');
+document.fonts.ready.then(() => {
+  if (T !== null) frame(+T);
+  else { const loop = (ms) => { frame(ms / 1000); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+  window.ready = true;
+});
+</script>

@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Pet sheet</title>
+<style>body{margin:0;background:#fdf6ec;font:14px system-ui}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+// Preview of every pet form and mood. ?t=seconds freezes the animation clock.
+import { drawPet } from '../pet/src/render/pets.js';
+import { SPECIES_IDS, SPECIES, formName } from '../pet/src/data/species.js';
+const q = new URLSearchParams(location.search);
+const view = q.get('view') || 'forms';
+const cols = view === 'forms'
+  ? [[1, null], [3, null], [5, 'fighter'], [6, 'sage'], [7, 'charm'], [9, 'fighter'], [8, 'sage'], [9, 'charm'], [10, 'charm']]
+  : ['idle', 'happy', 'sad', 'sleep', 'eat', 'sick', 'dirty', 'attack', 'hurt'];
+const CW = 190, RH = 210, TOP = 30;
+const c = document.getElementById('c');
+c.width = CW * cols.length + 20;
+c.height = RH * SPECIES_IDS.length + TOP;
+const ctx = c.getContext('2d');
+function frame(t) {
+  ctx.fillStyle = '#fdf6ec';
+  ctx.fillRect(0, 0, c.width, c.height);
+  cols.forEach((col, i) => {
+    ctx.fillStyle = '#7a6a5a';
+    ctx.textAlign = 'center';
+    ctx.fillText(view === 'forms' ? `Lv${col[0]} ${col[1] || ''}` : col, 10 + CW * i + CW / 2, 18);
+  });
+  SPECIES_IDS.forEach((sp, r) => {
+    cols.forEach((col, i) => {
+      const x = 10 + CW * i + CW / 2;
+      const y = TOP + RH * (r + 1) - 34;
+      const pet = view === 'forms' ? { species: sp, level: col[0], branch: col[1] } : { species: sp, level: 6, branch: null };
+      drawPet(ctx, pet, x, y, 150, { t: t + i * 0.37, mood: view === 'forms' ? 'idle' : col, seed: 1 });
+      ctx.fillStyle = '#5a4a3a';
+      ctx.fillText(formName(sp, pet.level, pet.branch), x, y + 22);
+    });
+  });
+}
+const T = q.get('t');
+if (T !== null) frame(+T);
+else {
+  const loop = (ms) => { frame(ms / 1000); requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+}
+window.ready = true;
+</script>

@@ -1,0 +1,77 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Yogurt's House showcase</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;600&display=swap">
+<style>body{margin:0;background:#fff7ec}canvas{display:block}</style>
+<canvas id="c" width="1600" height="1560"></canvas>
+<script type="module">
+// One picture that introduces the pets, how they grow, the areas and a battle.
+import { drawScene } from '../pet/src/render/scenes.js';
+import { drawPet } from '../pet/src/render/pets.js';
+import { drawFoe } from '../pet/src/render/enemies.js';
+import { AREAS } from '../pet/src/data/areas.js';
+import { SPECIES, SPECIES_IDS, ELEMENT_INFO, formName } from '../pet/src/data/species.js';
+import { roundRect, outlinedText } from '../src/render/draw.js';
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const t = +(new URLSearchParams(location.search).get('t') || 1.2);
+const txt = (s, x, y, size, color = '#5a3d2b', weight = 600, align = 'center') => {
+  ctx.font = `${weight} ${size}px Mitr, system-ui`; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y);
+};
+function panel(x, y, w, h, title) {
+  roundRect(ctx, x, y, w, h, 24, '#ffffff', '#f0d9bf', 3);
+  txt(title, x + 24, y + 30, 26, '#c2563a', 600, 'left');
+}
+document.fonts.ready.then(() => {
+  ctx.fillStyle = '#fff7ec'; ctx.fillRect(0, 0, c.width, c.height);
+  outlinedText(ctx, "🏠 บ้านโยเกิร์ต · Yogurt's House", 800, 52, { size: 46, fill: '#ffffff', stroke: '#c2563a', sw: 10 });
+  // 1. the five pets
+  panel(30, 95, 1540, 380, '🐾 สัตว์เลี้ยง 5 ตัว');
+  SPECIES_IDS.forEach((id, i) => {
+    const x = 30 + 154 + i * 308;
+    drawPet(ctx, { species: id, level: 5, branch: null }, x, 380, 230, { t: t + i, mood: i === 1 ? 'idle' : 'happy' });
+    const sp = SPECIES[id], el = ELEMENT_INFO[sp.element];
+    txt(sp.name, x, 410, 28);
+    txt(`${el.icon} ธาตุ${el.name} · ${sp.kind}`, x, 444, 18, '#8a6a52', 400);
+  });
+  // 2. growth path
+  panel(30, 495, 1540, 420, '🌱 โตจาก Lv1 ถึง Lv10 แตกสายที่ Lv4 และ Lv8 ตามวิธีเลี้ยง');
+  const path = [[1, null], [3, null], [5, 'fighter'], [5, 'sage'], [5, 'charm'], [9, 'fighter'], [9, 'sage'], [9, 'charm'], [10, 'charm']];
+  path.forEach(([lv, br], i) => {
+    const x = 30 + 95 + i * 168;
+    drawPet(ctx, { species: 'yogurt', level: lv, branch: br }, x, 840, 200, { t: t + i * 0.4 });
+    txt(`Lv${lv}`, x, 868, 20, '#c2563a');
+    txt(formName('yogurt', lv, br), x, 896, 15, '#8a6a52', 400);
+  });
+  // 3. areas
+  panel(30, 935, 1000, 600, '🗺️ พื้นที่เลี้ยง 5 แบบ (สุ่มเป็นบ้าน + ด่านผจญภัย)');
+  const tods = ['day', 'evening', 'day', 'day', 'night'];
+  AREAS.forEach((a, i) => {
+    const w = 300, h = 210;
+    const x = 30 + 25 + (i % 3) * 320 + (i >= 3 ? 160 : 0);
+    const y = 935 + 60 + Math.floor(i / 3) * 265;
+    ctx.save(); roundRect(ctx, x, y, w, h, 16); ctx.clip();
+    ctx.translate(x, y);
+    const s = drawScene(ctx, a.id, w, h, { tod: tods[i], t });
+    drawPet(ctx, { species: SPECIES_IDS[(i + 2) % 5], level: 4 + i, branch: ['charm', 'sage', 'fighter', 'charm', 'sage'][i] }, w / 2, s.stage, 120, { t: t + i, mood: tods[i] === 'night' ? 'sleep' : 'idle' });
+    ctx.restore();
+    txt(`${a.icon} ${a.name}  Lv${a.levels[0]}–${a.levels[1]}  ${a.boss.emoji} ${a.boss.name}`, x + w / 2, y + h + 22, 17, '#5a3d2b', 400);
+  });
+  // 4. battle mock
+  panel(1050, 935, 520, 600, '⚔️ ต่อสู้ผลัดกันเลือกท่า');
+  ctx.save(); roundRect(ctx, 1075, 995, 470, 330, 16); ctx.clip(); ctx.translate(1075, 995);
+  const s = drawScene(ctx, 'beach', 470, 330, { tod: 'day', t });
+  drawPet(ctx, { species: 'pongfu', level: 7, branch: 'fighter' }, 130, s.stage + 20, 170, { t, mood: 'attack' });
+  drawFoe(ctx, AREAS[3].boss.emoji ? { emoji: AREAS[3].boss.emoji, boss: true } : null, AREAS[3].boss.element, 350, s.stage + 10, 110, { t });
+  roundRect(ctx, 20, 18, 180, 22, 11, 'rgba(0,0,0,0.35)'); roundRect(ctx, 22, 20, 140, 18, 9, '#5fd068');
+  roundRect(ctx, 270, 18, 180, 22, 11, 'rgba(0,0,0,0.35)'); roundRect(ctx, 272, 20, 90, 18, 9, '#ff6b5b');
+  ctx.restore();
+  const btn = [['👊 หมัดพลัง', '#e8433f'], ['🪨 ปาหิน', '#b5834a'], ['🛡️ ตั้งการ์ด', '#4f7fe0'], ['🧪 ยาฟื้นพลัง', '#3fae6a']];
+  btn.forEach(([b, col], i) => {
+    const x = 1075 + (i % 2) * 240, y = 1345 + Math.floor(i / 2) * 82;
+    roundRect(ctx, x, y, 230, 68, 18, col, '#ffffff', 4);
+    txt(b, x + 115, y + 34, 24, '#ffffff');
+  });
+  window.ready = true;
+});
+</script>
