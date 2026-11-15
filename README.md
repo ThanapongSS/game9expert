@@ -55,6 +55,25 @@
 
 ข้อจำกัด: ไม่มีแจ้งเตือนเด้ง (iPad ต้องมีเซิร์ฟเวอร์) · เซฟอยู่ในเครื่องนั้นเท่านั้น ควรสำรองเซฟเป็นระยะ
 
+## 🎬 หนังสั้น 3D: ศึกป่าสายรุ้ง · Battle of the Rainbow Forest
+
+หนังสั้น 30 วินาที สร้างจากภาพวาดของน้อง 2 ภาพ ดูได้ที่ **`<โดเมนเดิม>/film/`** (เล่นสดใน browser ด้วย Three.js) หรือไฟล์วิดีโอ `film/rainbow-forest-battle.mp4` (1280×720, 30 fps, มีเสียง)
+
+| เวลา | ฉาก |
+|---|---|
+| 0:00 | กล้องโดรนลอยผ่านยอดไม้ในป่าสายรุ้ง |
+| 0:03 | **SOLARA ราชินีสุริยา** (ผมสายรุ้ง เขาเดียว มงกุฎทอง ปีกสายรุ้ง) เดินเข้าป่า |
+| 0:07 | **RAINBOLT เรนโบลต์** (ผิวฟ้า ผมบ็อบลายรุ้ง ปีกฟ้า พลาสเตอร์ที่แก้ม) เดินถือปืน |
+| 0:11 | เจอกันกลางลาน โคลสอัพดวงตาเรืองแสง |
+| 0:13 | ดาบสุริยาก่อตัวจากแสง · ปืนปริซึมพร้อมยิง · หลอดมานาขึ้น |
+| 0:15 | ยิงกระสุนสายรุ้ง 5 นัด ดาบปัดกระเด็น (นัดสุดท้ายสโลว์โม) |
+| 0:18 | ปืนแปลงเป็นดาบ ฟันกัน 4 จังหวะ กล้องหมุนรอบ |
+| 0:21 | บินขึ้นฟ้า ชาร์จมานาจนเต็ม หินลอย ท้องฟ้ามืด ฟ้าแลบ |
+| 0:25 | ลำแสงสุริยาชนลำแสงสายรุ้ง → ระเบิด |
+| 0:27 | ควันจาง ชื่อเรื่องขึ้น "โปรดติดตามตอนต่อไป…" |
+
+ตัวละคร ฉาก และเอฟเฟกต์สร้างด้วยโค้ดทั้งหมด เพลงและเสียงสังเคราะห์ด้วย `tools/film-soundtrack.py` (ไม่มีไฟล์เสียงจากที่อื่น) · ปุ่มใต้จอ: เล่น/หยุด, เริ่มใหม่, แถบเวลา, เปิด/ปิดเสียง, การ์ดฉากกดเพื่อกระโดด
+
 ## 🚀 Deploy ขึ้น GitHub Pages (ทำครั้งเดียว)
 
 1. ไปที่ repo บน GitHub → **Settings** → **Pages**
@@ -92,7 +111,12 @@ node tests/online-smoke.mjs   # E2E online 2 หน้าจอ (จำลอง
 node tools/make-icons.mjs     # สร้างไอคอนใหม่จาก tools/icon.html
 npm run smoke:pet             # E2E บ้านโยเกิร์ต บน iPad แนวตั้ง+แนวนอน
 node tools/make-icons.mjs pet # ไอคอนบ้านโยเกิร์ต (pet/icons/)
+python3 tools/film-soundtrack.py         # สร้างเพลง+เสียง film/soundtrack.m4a (ต้องมี numpy + ffmpeg)
+node tools/film-render.mjs               # render film/rainbow-forest-battle.mp4 (Playwright + ffmpeg, ~7 นาที)
+node tools/film-render.mjs --stills 5,19.6,26   # เซฟภาพนิ่งบางวินาทีไว้เช็คงานภาพ
 ```
+
+**หนังสั้น:** ไทม์ไลน์ทั้งเรื่องอยู่ที่ object `T` ใน `film/index.html` และต้องตรงกับ `T` ใน `tools/film-soundtrack.py` · เปิด `/film/?capture=1` = โหมดเฟรมนิ่ง 1280×720 ใช้ `FILM.renderAt(วินาที)`
 
 **ทดสอบเกมเลี้ยงสัตว์เร็วๆ:** เปิด `/pet/?dev=1` จะมีปุ่ม ⏩ +10น./+1ชม./+6ชม. ไว้ข้ามเวลา (ผู้เล่นปกติไม่เห็น) · หน้า preview: `tools/pet-sheet.html` (ทุกร่าง, `?view=moods` อารมณ์), `tools/pet-scenes.html` (5 ฉาก × 4 ช่วงเวลา), `tools/pet-showcase.html`
 
@@ -115,6 +139,8 @@ src/
   ui/                  หน้าเมนูทั้งหมด (DOM)
   i18n.js              ภาษาไทย / English
 lib/peerjs.min.js      PeerJS 1.5.5 (MIT)
+lib/three/             Three.js 0.160.0 + bloom postprocessing (MIT) สำหรับหนังสั้น
+film/                  🎬 หนังสั้น 3D ศึกป่าสายรุ้ง: index.html (ฉาก+ตัวละคร+ไทม์ไลน์), soundtrack.m4a, MP4
 tests/                 unit + E2E (pet-*.test.mjs และ pet-smoke.mjs = บ้านโยเกิร์ต)
 pet/                   🏠 เกมที่ 2 บ้านโยเกิร์ต (ใช้ draw/dom/audio/storage ร่วมกับเกมแรก)
   index.html · css/pet.css · manifest.webmanifest · sw.js · icons/
