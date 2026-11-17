@@ -1,6 +1,8 @@
-// Render film/index.html to MP4 (or a few preview stills) with headless Chromium.
-//   node tools/film-render.mjs                 -> film/rainbow-forest-battle.mp4 (1280x720, 30 fps, with soundtrack)
-//   node tools/film-render.mjs --stills 3,12.5 -> PNG stills into --out dir (default film/stills)
+// Render a film page to MP4 (or a few preview stills) with headless Chromium.
+//   node tools/film-render.mjs                         -> film/rainbow-forest-battle.mp4 (1280x720, 30 fps, with soundtrack)
+//   node tools/film-render.mjs --page film/chase       -> film/chase/<FILM.slug>.mp4
+//   node tools/film-render.mjs --stills 3,12.5 [--out dir] -> PNG stills (default <page>/stills)
+// The page must expose window.FILM = { renderAt(t), DUR, ready } and support ?capture=1.
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
 import http from 'node:http';
@@ -13,10 +15,10 @@ const { chromium } = require('playwright');
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
+const PAGE = opt('--page', 'film').replace(/\/+$/, '');
 const stills = opt('--stills', null);
-const outDir = opt('--out', path.join(ROOT, 'film/stills'));
-const FPS = +opt('--fps', 30), FROM = +opt('--from', 0), TO = +opt('--to', 30);
-const outMp4 = opt('--mp4', path.join(ROOT, 'film/rainbow-forest-battle.mp4'));
+const outDir = opt('--out', path.join(ROOT, PAGE, 'stills'));
+const FPS = +opt('--fps', 30), FROM = +opt('--from', 0);
 
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.m4a': 'audio/mp4', '.css': 'text/css', '.png': 'image/png' };
 const server = http.createServer((req, res) => {
@@ -36,10 +38,13 @@ const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=sw
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
 page.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') console.log('[page]', m.type(), m.text()); });
 page.on('pageerror', e => console.log('[pageerror]', e.message));
-await page.goto(`http://localhost:${port}/film/index.html?capture=1`);
+await page.goto(`http://localhost:${port}/${PAGE}/index.html?capture=1`);
 await page.waitForFunction(() => window.FILM && window.FILM.ready, null, { timeout: 120000 });
 await page.evaluate(() => document.fonts.ready);
 const clip = { x: 0, y: 0, width: 1280, height: 720 };
+const info = await page.evaluate(() => ({ dur: window.FILM.DUR, slug: window.FILM.slug }));
+const TO = +opt('--to', info.dur);
+const outMp4 = opt('--mp4', path.join(ROOT, PAGE, `${info.slug || 'rainbow-forest-battle'}.mp4`));
 
 if (stills) {
   fs.mkdirSync(outDir, { recursive: true });
@@ -50,7 +55,7 @@ if (stills) {
     console.log(f);
   }
 } else {
-  const audioPath = path.join(ROOT, 'film/soundtrack.m4a');
+  const audioPath = path.join(ROOT, PAGE, 'soundtrack.m4a');
   const ff = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-'];
   if (fs.existsSync(audioPath)) ff.push('-ss', String(FROM), '-i', audioPath, '-map', '0:v', '-map', '1:a', '-c:a', 'aac', '-b:a', '160k', '-shortest');
   ff.push('-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', outMp4);

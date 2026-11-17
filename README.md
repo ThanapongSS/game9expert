@@ -74,6 +74,22 @@
 
 ตัวละคร ฉาก และเอฟเฟกต์สร้างด้วยโค้ดทั้งหมด เพลงและเสียงสังเคราะห์ด้วย `tools/film-soundtrack.py` (ไม่มีไฟล์เสียงจากที่อื่น) · ปุ่มใต้จอ: เล่น/หยุด, เริ่มใหม่, แถบเวลา, เปิด/ปิดเสียง, การ์ดฉากกดเพื่อกระโดด
 
+### 🎬 เรื่องที่ 2: สปริงแฟง ซ่อนหาในป่าเรืองแสง (45 วินาที)
+
+ดูที่ **`<โดเมนเดิม>/film/chase/`** หรือไฟล์ `film/chase/springfang-chase.mp4` · ป่ากลางคืนเรืองแสง แนวไล่ล่าสยองขวัญแบบการ์ตูน (ตอนจบกลืนทั้งตัวแบบการ์ตูน ไม่มีเลือด)
+
+| เวลา | ฉาก |
+|---|---|
+| 0:00 | พลบค่ำในป่าเรืองแสง **BLUEBELL บลูเบล** (หนูฟ้าโบว์ชมพู) กระโดดเล่น |
+| 0:04 | ตาแดงในพุ่มไม้ **SPRINGFANG สปริงแฟง** (หัวตุ๊กตา ตัวสปริง ขาหมาป่า) ยืดตัวขึ้นมา บลูเบลกรี๊ดแล้ววิ่ง |
+| 0:08 | ไล่ล่าลอดรากไม้เรืองแสง |
+| 0:13 | ซ่อนในพุ่มไม้ → ปีศาจยืดสปริงสอดส่อง → หนูแอบไปขุดดินมุดใต้รากไม้ → ปีศาจหันหัว 180° แล้วเจอรู |
+| 0:19 | หนีขึ้นใบไม้ยักษ์บนยอดไม้ ปีศาจดีดตัวตาม → กระโดดลงแม่น้ำ (สโลว์โม) |
+| 0:25 | ใต้น้ำ: จระเข้พุ่งงับ แต่หนีไปเพราะกลัวตาแดงของสปริงแฟง |
+| 0:32 | บ้านบนเสา: ซ่อนใต้โต๊ะ ไฟกะพริบ ตาแดงที่หน้าต่าง ประตูเอี๊ยด → หนีออกหน้าต่างหลัง |
+| 0:38 | โพรงไม้ทางตัน → ปีศาจห้อยหัวลงมา อ้าปากกลืนทั้งตัว ก้อนนูนไหลไปตามสปริง แล้วเรอ |
+| 0:42 | เหลือแค่โบว์ชมพู · ชื่อเรื่อง + THE END? |
+
 ## 🚀 Deploy ขึ้น GitHub Pages (ทำครั้งเดียว)
 
 1. ไปที่ repo บน GitHub → **Settings** → **Pages**
@@ -114,9 +130,11 @@ node tools/make-icons.mjs pet # ไอคอนบ้านโยเกิร์
 python3 tools/film-soundtrack.py         # สร้างเพลง+เสียง film/soundtrack.m4a (ต้องมี numpy + ffmpeg)
 node tools/film-render.mjs               # render film/rainbow-forest-battle.mp4 (Playwright + ffmpeg, ~7 นาที)
 node tools/film-render.mjs --stills 5,19.6,26   # เซฟภาพนิ่งบางวินาทีไว้เช็คงานภาพ
+python3 tools/film-chase-soundtrack.py   # เสียงเรื่องที่ 2 → film/chase/soundtrack.m4a
+node tools/film-render.mjs --page film/chase    # render film/chase/springfang-chase.mp4 (~10 นาที)
 ```
 
-**หนังสั้น:** ไทม์ไลน์ทั้งเรื่องอยู่ที่ object `T` ใน `film/index.html` และต้องตรงกับ `T` ใน `tools/film-soundtrack.py` · เปิด `/film/?capture=1` = โหมดเฟรมนิ่ง 1280×720 ใช้ `FILM.renderAt(วินาที)`
+**หนังสั้น:** ไทม์ไลน์ทั้งเรื่องอยู่ที่ object `T` ในหน้า HTML ของแต่ละเรื่อง และต้องตรงกับ `T` ในสคริปต์เสียงของเรื่องนั้น (`tools/film-soundtrack.py`, `tools/film-chase-soundtrack.py`) · เครื่องดนตรี/เสียงสังเคราะห์ใช้ร่วมกันที่ `tools/filmsynth.py` · เปิด `/film/?capture=1` = โหมดเฟรมนิ่ง 1280×720 ใช้ `FILM.renderAt(วินาที)`
 
 **ทดสอบเกมเลี้ยงสัตว์เร็วๆ:** เปิด `/pet/?dev=1` จะมีปุ่ม ⏩ +10น./+1ชม./+6ชม. ไว้ข้ามเวลา (ผู้เล่นปกติไม่เห็น) · หน้า preview: `tools/pet-sheet.html` (ทุกร่าง, `?view=moods` อารมณ์), `tools/pet-scenes.html` (5 ฉาก × 4 ช่วงเวลา), `tools/pet-showcase.html`
 
@@ -141,6 +159,7 @@ src/
 lib/peerjs.min.js      PeerJS 1.5.5 (MIT)
 lib/three/             Three.js 0.160.0 + bloom postprocessing (MIT) สำหรับหนังสั้น
 film/                  🎬 หนังสั้น 3D ศึกป่าสายรุ้ง: index.html (ฉาก+ตัวละคร+ไทม์ไลน์), soundtrack.m4a, MP4
+  chase/               🎬 เรื่องที่ 2 สปริงแฟง ซ่อนหาในป่าเรืองแสง (โครงเดียวกัน)
 tests/                 unit + E2E (pet-*.test.mjs และ pet-smoke.mjs = บ้านโยเกิร์ต)
 pet/                   🏠 เกมที่ 2 บ้านโยเกิร์ต (ใช้ draw/dom/audio/storage ร่วมกับเกมแรก)
   index.html · css/pet.css · manifest.webmanifest · sw.js · icons/
